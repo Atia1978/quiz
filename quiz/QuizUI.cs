@@ -1,53 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Quiz
 {
     public class QuizUI
     {
-        private readonly QuizLogic _quizLogic;
 
-        public QuizUI(QuizLogic quizLogic)
+        public int ShowMenu()
         {
-            _quizLogic = quizLogic;
+            Console.WriteLine("\n--- Quiz System ---");
+            Console.WriteLine("1. Create a Quiz");
+            Console.WriteLine("2. Take a Quiz");
+            Console.WriteLine("3. Exit");
+            Console.Write("Choose an option: ");
+
+            if (int.TryParse(Console.ReadLine(), out int choice))
+                return choice;
+
+            return -1; 
         }
 
-        // Show the main menu and handle user input for different actions
-        public void ShowMenu()
+        public List<Question> CreateQuiz(List<Question> questions)
         {
-            while (true)
-            {
-                Console.WriteLine("\n--- Quiz System ---");
-                Console.WriteLine("1. Create a Quiz");
-                Console.WriteLine("2. Take a Quiz");
-                Console.WriteLine("3. Exit");
-                Console.Write("Choose an option: ");
-
-                string choice = Console.ReadLine();
-                switch (choice)
-                {
-                    case "1":
-                        CreateQuiz();
-                        break;
-                    case "2":
-                        TakeQuiz();
-                        break;
-                    case "3":
-                        return;
-                    default:
-                        Console.WriteLine("Invalid option. Try again.");
-                        break;
-                }
-            }
-        }
-
-        // Method to create a quiz by adding questions
-        public void CreateQuiz()
-        {
-            var questions = _quizLogic.LoadQuestions();
             Console.WriteLine("\n--- Create a New Quiz ---");
 
             while (true)
@@ -65,27 +40,21 @@ namespace Quiz
                     answers.Add(answer);
                 }
 
-                Console.WriteLine("Enter the correct answer numbers (comma-separated, starting from 1):");
-                List<int> correctAnswerIndices = Console.ReadLine()
-                                                        .Split(',')
-                                                        .Select(x => int.Parse(x.Trim()) - 1)
-                                                        .ToList();
+                Console.Write("Enter the correct answer numbers (comma-separated, starting from 1): ");
+                List<int> correctAnswerIndices = ReadIntList();
 
-                _quizLogic.AddQuestion(questions, questionText, answers, correctAnswerIndices);
+                QuizLogic.AddQuestion(questions, questionText, answers, correctAnswerIndices);
 
                 Console.Write("Do you want to add another question? (yes/no): ");
                 if (Console.ReadLine().ToLower() != "yes") break;
             }
 
-            _quizLogic.SaveQuestions(questions);
             Console.WriteLine("Quiz saved successfully!");
+            return questions; 
         }
 
-        // Method to allow the user to take the quiz
-        public void TakeQuiz()
+        public void TakeQuiz(List<Question> questions)
         {
-            List<Question> questions = _quizLogic.LoadQuestions();
-
             if (questions.Count == 0)
             {
                 Console.WriteLine("No questions available. Please create a quiz first.");
@@ -100,19 +69,16 @@ namespace Quiz
 
             foreach (var question in shuffledQuestions)
             {
-                Console.WriteLine($"\n{question.Text}");
+                Console.WriteLine($"\n{question.QuestionText}");
                 for (int i = 0; i < question.Answers.Count; i++)
                 {
                     Console.WriteLine($"{i + 1}. {question.Answers[i]}");
                 }
 
                 Console.Write("Enter your answers (comma-separated, starting from 1): ");
-                List<int> userAnswers = Console.ReadLine()
-                                               .Split(',')
-                                               .Select(x => int.Parse(x.Trim()) - 1)
-                                               .ToList();
+                List<int> userAnswers = ReadIntList();
 
-                if (_quizLogic.CheckAnswer(question, userAnswers))
+                if (QuizLogic.CheckAnswer(question, userAnswers))
                 {
                     Console.WriteLine("Correct!");
                     score++;
@@ -124,6 +90,24 @@ namespace Quiz
             }
 
             Console.WriteLine($"\nQuiz finished! Your score: {score}/{questions.Count}");
+        }
+
+        private List<int> ReadIntList()
+        {
+            while (true)
+            {
+                try
+                {
+                    return Console.ReadLine()
+                        .Split(',')
+                        .Select(x => int.Parse(x.Trim()) - 1)
+                        .ToList();
+                }
+                catch
+                {
+                    Console.WriteLine("Invalid input. Please enter numbers separated by commas.");
+                }
+            }
         }
     }
 }

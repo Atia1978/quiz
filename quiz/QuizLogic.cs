@@ -3,13 +3,12 @@ using System.Xml.Serialization;
 
 namespace Quiz
 {
-    public class QuizLogic
+    public static class QuizLogic
     {
-        private const string FileName = @"C:\Users\abdal\source\repos\quiz\quiz_questions.xml";
+        private static readonly string FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "quiz_questions.xml");
 
-        public List<Question> LoadQuestions()
+        public static List<Question> LoadQuestions()
         {
-            
             if (!File.Exists(FileName))
             {
                 return new List<Question>();
@@ -17,36 +16,55 @@ namespace Quiz
 
             XmlSerializer formatter = new XmlSerializer(typeof(List<Question>));
 
-            using (FileStream fs = new FileStream(FileName, FileMode.Open))
+            try
             {
-                return (List<Question>)formatter.Deserialize(fs);
+                using (FileStream fs = new FileStream(FileName, FileMode.Open))
+                {
+                    return (List<Question>)formatter.Deserialize(fs);
+                }
             }
-           
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error loading questions: " + ex.Message);
+                return new List<Question>();
+            }
         }
 
-        public void SaveQuestions(List<Question> questions)
+        public static void SaveQuestions(List<Question> questions)
         {
             XmlSerializer formatter = new XmlSerializer(typeof(List<Question>));
 
-            using (FileStream fs = new FileStream(FileName, FileMode.Create))
+            try
             {
-                formatter.Serialize(fs, questions);
+                using (FileStream fs = new FileStream(FileName, FileMode.Create))
+                {
+                    formatter.Serialize(fs, questions);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error saving questions: " + ex.Message);
             }
         }
 
-        public void AddQuestion(List<Question> questions, string text, List<string> answers, List<int> correctAnswerIndices)
+        public static void AddQuestion(List<Question> questions, string text, List<string> answers, List<int> correctAnswerIndices)
         {
             var question = new Question(text, answers, correctAnswerIndices);
             questions.Add(question);
         }
 
-        public bool CheckAnswer(Question question, List<int> userAnswers)
+        public static bool CheckAnswer(Question question, List<int> userAnswers)
         {
             return question.IsCorrect(userAnswers);
         }
 
-        public Question GetRandomQuestion(List<Question> questions)
+        public static Question GetRandomQuestion(List<Question> questions)
         {
+            if (questions.Count == 0)
+            {
+                throw new InvalidOperationException("No questions available.");
+            }
+
             Random random = new Random();
             int index = random.Next(questions.Count);
             return questions[index];

@@ -1,38 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace Quiz
 {
     public class Question
     {
-        public string Text { get; set; }
+        public string QuestionText { get; set; }
         public List<string> Answers { get; set; }
-        public List<int> CorrectAnswerIndices { get; set; }
-        public Question() 
+        public List<int> CorrectAnswers { get; set; }
+        public Question()
         {
             Answers = new List<string>();
-            CorrectAnswerIndices = new List<int>();
+            CorrectAnswers = new List<int>();
         }
 
         public Question(string text, List<string> answers, List<int> correctAnswerIndices)
         {
-            Text = text;
+            QuestionText = text;
             Answers = answers;
-            CorrectAnswerIndices = correctAnswerIndices;
+            CorrectAnswers = correctAnswerIndices;
         }
 
         public bool IsCorrect(List<int> userAnswers)
         {
-            userAnswers.Sort();
-            CorrectAnswerIndices.Sort();
-            return CorrectAnswerIndices.SequenceEqual(userAnswers);
+            return new HashSet<int>(CorrectAnswers).SetEquals(userAnswers);
         }
-        //public bool IsCorrect(List<int> userAnswers)
-        //{
-        //    return CorrectAnswerIndices.OrderBy(x => x).SequenceEqual(userAnswers.OrderBy(x => x));
-        //}
+        public void DisplayQuestion()
+        {
+            Console.WriteLine(QuestionText);
+            for (int i = 0; i < Answers.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {Answers[i]}");
+            }
+        }
+
     }
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfQuestion xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Question>
+    <Text>how are u ?</Text>
+    <Answers>
+      <string>abdalla</string>
+      <string>atia</string>
+      <string>ali</string>
+    </Answers>
+    <CorrectAnswerIndices>
+      <int>0</int>
+    </CorrectAnswerIndices>
+  </Question>
+  <Question>
+    <Text>Wie Grouss Stadt Wien?</Text>
+    <Answers>
+      <string>1000 KM</string>
+      <string>2000 KM</string>
+      <string>10000 KM</string>
+    </Answers>
+    <CorrectAnswerIndices>
+      <int>2</int>
+    </CorrectAnswerIndices>
+  </Question>
+  <Question>
+    <Text>Wie Grosse Stadt USA?</Text>
+    <Answers>
+      <string>50000 KM</string>
+      <string>100000 KM</string>
+      <string>500000 KM</string>
+    </Answers>
+    <CorrectAnswerIndices>
+      <int>1</int>
+    </CorrectAnswerIndices>
+  </Question>
+</ArrayOfQuestion>
