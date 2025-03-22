@@ -1,34 +1,28 @@
-﻿using static System.Net.Mime.MediaTypeNames;
+﻿using Quiz;
+using static System.Net.Mime.MediaTypeNames;
 
-namespace Quiz
+List<Question> questions = QuizLogic.LoadQuestions();
+QuizUI quizUI = new QuizUI();
+
+while (true)
 {
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            List<Question> questions = QuizLogic.LoadQuestions();
-            QuizUI quizUI = new QuizUI();
+    MenuOption choice = (MenuOption)quizUI.ShowMenu();
 
-            while (true)
-            {
-                int choice = quizUI.ShowMenu();
-                switch (choice)
-                {
-                    case 1:
-                        questions = quizUI.CreateQuiz(questions);
-                        QuizLogic.SaveQuestions(questions);
-                        break;
-                    case 2:
-                        quizUI.TakeQuiz(questions);
-                        break;
-                    case 3:
-                        Console.WriteLine("Goodbye!");
-                        return;
-                    default:
-                        Console.WriteLine("Invalid option. Try again.");
-                        break;
-                }
-            }
-        }
+    switch (choice)
+    {
+        case MenuOption.CreateQuiz:
+            questions = quizUI.CreateQuiz(questions);
+            QuizLogic.SaveQuestions(questions);
+            break;
+        case MenuOption.TakeQuiz:
+            quizUI.TakeQuiz(questions);
+            break;
+        case MenuOption.Exit:
+            quizUI.ShowGoodbyeMessage();
+            return;
+        default:
+            quizUI.ShowInvalidOption();
+            break;
     }
 }
+

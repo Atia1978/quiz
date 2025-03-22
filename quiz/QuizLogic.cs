@@ -6,12 +6,13 @@ namespace Quiz
     public static class QuizLogic
     {
         private static readonly string FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "quiz_questions.xml");
+        private static readonly Random RandomGenerator = new Random(); // Static random instance
 
         public static List<Question> LoadQuestions()
         {
             if (!File.Exists(FileName))
             {
-                return new List<Question>();
+                return CreateEmptyQuestionList();
             }
 
             XmlSerializer formatter = new XmlSerializer(typeof(List<Question>));
@@ -25,8 +26,8 @@ namespace Quiz
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error loading questions: " + ex.Message);
-                return new List<Question>();
+                HandleFileError("loading questions", ex);
+                return CreateEmptyQuestionList();
             }
         }
 
@@ -43,7 +44,7 @@ namespace Quiz
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error saving questions: " + ex.Message);
+                HandleFileError("saving questions", ex);
             }
         }
 
@@ -60,14 +61,28 @@ namespace Quiz
 
         public static Question GetRandomQuestion(List<Question> questions)
         {
-            if (questions.Count == 0)
+            if (IsEmpty(questions))
             {
                 throw new InvalidOperationException("No questions available.");
             }
 
-            Random random = new Random();
-            int index = random.Next(questions.Count);
+            int index = RandomGenerator.Next(questions.Count);
             return questions[index];
+        }
+
+        private static List<Question> CreateEmptyQuestionList()
+        {
+            return new List<Question>(); // Improved readability
+        }
+
+        private static bool IsEmpty(List<Question> questions)
+        {
+            return !questions.Any(); // More intuitive than Count == 0
+        }
+
+        private static void HandleFileError(string action, Exception ex)
+        {
+            Console.WriteLine($"Error {action}: {ex.Message}");
         }
     }
 }
