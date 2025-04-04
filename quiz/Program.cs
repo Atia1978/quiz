@@ -4,6 +4,11 @@ using static System.Net.Mime.MediaTypeNames;
 List<Question> questions = QuizLogic.LoadQuestions();
 QuizUI quizUI = new QuizUI();
 
+if (questions.Count == 0)
+{
+    quizUI.ShowLoadErrorMessage();
+}
+
 while (true)
 {
     MenuOption choice = (MenuOption)quizUI.ShowMenu();

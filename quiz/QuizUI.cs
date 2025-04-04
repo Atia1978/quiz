@@ -171,5 +171,9 @@ namespace Quiz
         {
             Console.WriteLine("Invalid option. Try again.");
         }
+        public void ShowLoadErrorMessage()
+        {
+            Console.WriteLine("⚠️ Failed to load questions. Please check your quiz file or try again later.");
+        }
     }
 }

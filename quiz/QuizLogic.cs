@@ -6,7 +6,8 @@ namespace Quiz
     public static class QuizLogic
     {
         private static readonly string FileName = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "quiz_questions.xml");
-        private static readonly Random RandomGenerator = new Random(); // Static random instance
+        private static readonly Random RandomGenerator = new Random();
+        private const string LogFilePath = "error.log";
 
         public static List<Question> LoadQuestions()
         {
@@ -72,17 +73,26 @@ namespace Quiz
 
         private static List<Question> CreateEmptyQuestionList()
         {
-            return new List<Question>(); // Improved readability
+            return new List<Question>();
         }
 
         private static bool IsEmpty(List<Question> questions)
         {
-            return !questions.Any(); // More intuitive than Count == 0
+            return !questions.Any();
         }
 
         private static void HandleFileError(string action, Exception ex)
         {
-            Console.WriteLine($"Error {action}: {ex.Message}");
+            string errorMessage = $"Error {action}: {ex.Message}";
+
+            try
+            {
+                File.AppendAllText(LogFilePath, $"{DateTime.Now} - {errorMessage}{Environment.NewLine}");
+            }
+            catch
+            {
+                Console.WriteLine("An error occurred while processing your request. Please try again later.");
+            }
         }
     }
 }
